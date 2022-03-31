@@ -1,0 +1,13 @@
+.btn {
+    color: #cd9d8d;
+    background-color: #fff;
+    cursor: pointer;
+    padding: 0 !important;
+    width: fit-content;
+    border: none !important;
+    
+  }
+
+.btnNo {
+    padding-right: 10px !important;
+}

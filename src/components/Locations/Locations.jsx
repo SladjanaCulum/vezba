@@ -1,24 +1,35 @@
 import React from "react";
 import "./Locations.css";
-import { lokacije } from "../services/lokacije";
 import { Link } from "react-router-dom";
 import { Table } from "react-materialize";
 import { useState } from "react";
-
+import { lokacije } from "../services/lokacije";
+import { PopUpAreYouSure } from "../PopUpAreYouSure/PopUpAreYouSure";
 
 export const Locations = () => {
-
   const [show, setShow] = useState(false);
   const handleCloseBubble = () => setShow(false);
   const handleShowBubble = () => setShow(true);
-  const [list, updateList] = useState(lokacije);
+  // let local = localStorage.setItem("lokacije", JSON.stringify(lokacije));
 
-  const deleteUser = (e) => {
-    const name = e.target.getAttribute("id")
-     updateList(list.filter(item => item.name !== name));
-   };
+  const [users, setUsers] = useState(
+    JSON.parse(localStorage.getItem("lokacije"))
+  );
 
-  let component = lokacije.map((location) => {
+  let deleteUser = (id) => {
+    const updateUser = users.filter((user) => user.id !== id);
+    setUsers(updateUser);
+    localStorage.setItem("lokacije", JSON.stringify(updateUser));
+    handleCloseBubble();
+    // const updateUser = users.filter((user) => user.id !== id);
+    // setUsers(updateUser);
+    // localStorage.setItem("lokacije", JSON.stringify(updateUser));
+    // // setShow(false);
+    console.log("Hi");
+    console.log(JSON.parse(localStorage.getItem("lokacije")));
+  };
+
+  let component = users.map((location) => {
     const createDate = new Date(location.createdAt);
     const yC = createDate.getFullYear();
     const mC = createDate.getMonth() + 1;
@@ -28,7 +39,7 @@ export const Locations = () => {
     const yM = modifiedDate.getFullYear();
     const mM = modifiedDate.getMonth() + 1;
     const dM = modifiedDate.getDate();
-    
+
     return (
       <tr className="lista">
         <td>{location.id}</td>
@@ -41,41 +52,28 @@ export const Locations = () => {
         <td className="centar">{`${dC}.${mC}.${yC}`}</td>
         <td className="centar">{`${dM}.${mM}.${yM}`}</td>
         <td>
-          
           <Link to={`/singlelocation/${location.id}`}>
-            <i class="material-icons i">edit</i>
+            <i className="material-icons i">edit</i>
           </Link>
         </td>
         <td>
-        <button
-            className="btn btn-light "
-            type="button"
-            onClick={handleShowBubble}
-          >
-            <i class="material-icons i">delete</i>
-          </button>
-          <div
-            style={{ display: show ? "block" : "none" }}
-          >
-            <p>Are you sure?</p>
-            <div >
-              <button
-                className="btn btn-light"
-                type="button"
-                onClick={handleCloseBubble}
-              >
-                No
-              </button>
-              <button
-              onClick={() => deleteUser(location.id)}
-                className="btn btn-light"
-              >
-                Yes
-              </button>
-            </div>
-          </div>
-          
+          <PopUpAreYouSure
+            id={location.id}
+            deleteUser={deleteUser}
+            show={show}
+            handleShowBubble={handleShowBubble}
+            handleCloseBubble={handleCloseBubble}
+          />
         </td>
+        {/* <td>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => deleteUser(location.id)}
+          >
+            <i className="material-icons">delete</i>
+          </button>
+        </td> */}
       </tr>
     );
   });
